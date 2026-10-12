@@ -82,7 +82,21 @@ describe("My Token", () => {
                 signer1.address, 
                 hre.ethers.parseUnits("1", decimals))
             ).to.be.revertedWith("insufficient allowance");
-
-        })
+        });
+        it("should transfer 1Mt from signer0 to signer1", async () => {
+            const signer0 = signers[0];
+            const signer1 = signers[1];
+            console.log("before transfer signer0: ", await myTokenC.balanceOf(signer0.address));    //이전 balance
+            console.log("before transfer signer1: ", await myTokenC.balanceOf(signer1.address));
+            await myTokenC.approve(signer1.address, hre.ethers.parseUnits("1", decimals));          //task1. 자산 이동권한 부여
+            await myTokenC.connect(signer1).transferFrom(                                           //task2. signer1이 signer0의 MT토큰을 자신의 주소로 전송
+                signer0.address, 
+                signer1.address, 
+                hre.ethers.parseUnits("1", decimals)
+            );
+            console.log("after transfer signer0: ", await myTokenC.balanceOf(signer0.address));     //이후 balance
+            console.log("after transfer signer1: ", await myTokenC.balanceOf(signer1.address));
+            
+        });
     });
 });
