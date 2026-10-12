@@ -31,7 +31,7 @@ contract MyToken {
         allowance[from][spender] -= amount;
         balanceOf[from] -= amount;
         balanceOf[to] += amount;
-        emit Transfer(from, to, amount)
+        emit Transfer(from, to, amount);
     }
 
     function _mint(uint256 amount, address owner) internal {
