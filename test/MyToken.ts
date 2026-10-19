@@ -1,9 +1,7 @@
 import hre from "hardhat";
 import { expect } from "chai";
 import { MyToken } from "../typechain-types/";
-
-const MINTING_AMOUNT = 100n;
-const DECIMALS = 18n;
+import { DECIMALS, MINTING_AMOUNT } from "./constants";
 
 describe("My Token", () => {
     let myTokenC: MyToken;
