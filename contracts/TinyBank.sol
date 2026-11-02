@@ -21,7 +21,7 @@ contract TinyBank is ManagedAccess {
 
     mapping(address => uint256) public lastClaimedBlock;
 
-    uint256 defalutRewardPerBlock = 1 * 10**18;
+    uint256 defaultRewardPerBlock = 1 * 10**18;
     uint256 rewardPerBlock;
 
     mapping(address => uint256) public staked;
@@ -29,7 +29,7 @@ contract TinyBank is ManagedAccess {
     
     constructor(IMyToken _stakingToken) ManagedAccess(msg.sender, msg.sender) {
         stakingToken = _stakingToken;
-        rewardPerBlock = defalutRewardPerBlock;
+        rewardPerBlock = defaultRewardPerBlock;
     }
 
     modifier updateReward(address to) {
