@@ -44,7 +44,7 @@ contract TinyBank is ManagedAccess {
         _;
     }
 
-    function setRewardPerBlock(uint256 _amount) external onlyManager {
+    function setRewardPerBlock(uint256 _amount) external onlyAllConfirmed {     //assignment 3-1: onlyAllConfirmed modifier로 수정
         rewardPerBlock = _amount;
     }
 

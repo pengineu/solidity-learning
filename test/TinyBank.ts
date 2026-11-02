@@ -18,6 +18,7 @@ describe("TinyBank", () => {
             await myTokenC.getAddress()
         ])
         await myTokenC.setManager(tinyBankC.getAddress());
+        await tinyBankC.setManagers(signers[4].address, signers[5].address, signers[6].address);    //assignment 3-1: 3명 이상의 manager를 등록
     })
 
     describe("Initialized state check", () => {
@@ -70,11 +71,29 @@ describe("TinyBank", () => {
                 hre.ethers.parseUnits((BLOCKS + 1n + MINTING_AMOUNT).toString())
             );
         })
-
+        
+        //assignment 3-2: test 코드 완성
         it("Should revert when changing rewardPerBlock by hacker", async () => {
-            const hacker = signers[3];
+            const hacker = signers[3];                                                          //hacker는 manager가 아닌 signer3번
             const rewardToChange = hre.ethers.parseUnits("10000", DECIMALS);
-            await expect(tinyBankC.connect(hacker).setRewardPerBlock(rewardToChange)).to.be.revertedWith("You are not authorized to manage this contract");
+            await expect(tinyBankC.connect(hacker).setRewardPerBlock(rewardToChange)).to.be.revertedWith("You are not a manager");  //manager가 아니기 때문에 revert
+        })
+
+        it("Should revert when changing rewardPerBlock by unconfirmed manager", async () => {
+            await tinyBankC.confirm();                                                          //signer0번(배포자, manager) confirm
+            await tinyBankC.connect(signers[4]).confirm();                                      //signer4번(manager) confirm
+            await tinyBankC.connect(signers[5]).confirm();                                      //signer5번(manager) confirm
+            const rewardToChange = hre.ethers.parseUnits("10000", DECIMALS);
+            await expect(tinyBankC.setRewardPerBlock(rewardToChange)).to.be.revertedWith("Not all confirmed yet");  //signer6번이 confirm하지 않았기 때문에 revert
+        })
+
+        it("Should change rewardPerBlock by confirmed managers", async () => {
+            await tinyBankC.confirm();                                                          //signer0번(배포자, manager) confirm
+            await tinyBankC.connect(signers[4]).confirm();                                      //signer4번(manager) confirm
+            await tinyBankC.connect(signers[5]).confirm();                                      //signer5번(manager) confirm
+            await tinyBankC.connect(signers[6]).confirm();                                      //signer6번(manager) confirm
+            const rewardToChange = hre.ethers.parseUnits("2", DECIMALS);
+            await tinyBankC.setRewardPerBlock(rewardToChange);                                  //모두 confirmed manager이기 때문에 통과
         })
     })
 })
